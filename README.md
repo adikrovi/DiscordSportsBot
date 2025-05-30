@@ -2,8 +2,6 @@
 
 A powerful Discord bot for managing competitive matches, calculating ELO ratings, tracking zero-point loss punishments ("naked laps"), and providing interactive slash commands.
 
----
-
 ## 🔧 Features
 
 - Create 1v1 or 2v2 sports
@@ -13,8 +11,6 @@ A powerful Discord bot for managing competitive matches, calculating ELO ratings
 - View leaderboards and match history
 - Admin command to clear naked laps
 - Slash command autocomplete for sport names
-
----
 
 
 ## 💬 Commands Overview
