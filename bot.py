@@ -1,13 +1,15 @@
 import discord
 from discord import app_commands
+from discord.ui import View, Button
 import json
 import os
 import math
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
-TOKEN = os.getenv("DISCORD_TOKEN")
+TOKEN = os.getenv("TOKEN")
 GUILD_ID = int(os.getenv("GUILD_ID"))
 
 intents = discord.Intents.default()
@@ -23,7 +25,7 @@ if os.path.exists(DATA_FILE):
     with open(DATA_FILE, "r") as f:
         match_data = json.load(f)
 else:
-    match_data = {"sports": {}, "elo": {}, "matches": []}
+    match_data = {"sports": {}, "elo": {}, "matches": [], "naked_laps": {}}
 
 
 def save_data():
@@ -70,6 +72,59 @@ async def autocomplete_sports(interaction: discord.Interaction, current: str):
         for sport in match_data.get("sports", {})
         if current.lower() in sport.lower()
     ][:25]
+
+
+class ConfirmMatchView(View):
+    def __init__(self, losers, winners, score, sport, interaction):
+        super().__init__(timeout=60)
+        self.losers = losers
+        self.finalized = False
+        self.interaction = interaction
+        self.sport = sport
+        self.score = score
+        self.winner_ids = [m.id for m in winners]
+        self.loser_ids = [m.id for m in losers]
+
+    @discord.ui.button(label="✅ Confirm", style=discord.ButtonStyle.success)
+    async def confirm(self, interaction: discord.Interaction, button: Button):
+        if interaction.user.id not in [m.id for m in self.losers]:
+            await interaction.response.send_message(
+                "⛔ Only a losing player can confirm this match.", ephemeral=True
+            )
+            return
+
+        if self.finalized:
+            await interaction.response.send_message(
+                "✅ Match already confirmed.", ephemeral=True
+            )
+            return
+
+        self.finalized = True
+
+        match_data["matches"].append(
+            {
+                "sport": self.sport,
+                "winner_ids": self.winner_ids,
+                "loser_ids": self.loser_ids,
+                "score": self.score,
+                "reported_by": self.interaction.user.id,
+            }
+        )
+
+        update_elo_winner_loser(self.winner_ids, self.loser_ids, self.sport)
+
+        if self.score.split("-")[1].strip() == "0":
+            for uid in self.loser_ids:
+                uid_str = str(uid)
+                match_data["naked_laps"][uid_str] = (
+                    match_data["naked_laps"].get(uid_str, 0) + 1
+                )
+
+        save_data()
+
+        await interaction.response.edit_message(
+            content="✅ Match confirmed and recorded!", view=None
+        )
 
 
 @client.event
@@ -154,37 +209,23 @@ async def match(
     winners = [winner1] if team_size == 1 else [winner1, winner2]
     losers = [loser1] if team_size == 1 else [loser1, loser2]
 
-    winner_ids = [m.id for m in winners]
-    loser_ids = [m.id for m in losers]
-
-    match_data["matches"].append(
-        {
-            "sport": sport,
-            "winner_ids": winner_ids,
-            "loser_ids": loser_ids,
-            "score": score,
-            "reported_by": interaction.user.id,
-        }
+    view = ConfirmMatchView(
+        losers=losers,
+        winners=winners,
+        score=score,
+        sport=sport,
+        interaction=interaction,
     )
-
-    update_elo_winner_loser(winner_ids, loser_ids, sport)
-    save_data()
-
+    loser_mentions = " or ".join([m.mention for m in losers])
     winner_names = ", ".join([m.display_name for m in winners])
     loser_names = ", ".join([m.display_name for m in losers])
 
-    loser_score = score.split("-")[1] if "-" in score else "0"
-    if loser_score.strip() == "0":
-        for member in losers:
-            uid = str(member.id)
-            match_data.setdefault("naked_laps", {})
-            match_data["naked_laps"][uid] = match_data["naked_laps"].get(uid, 0) + 1
-
     await interaction.response.send_message(
-        f"📌 Recorded **{sport}** match.\n"
-        f"🏆 Winners: {winner_names}\n"
-        f"💀 Losers: {loser_names}\n"
-        f"🎯 Score: {score}"
+        f"📋 Waiting for confirmation from {loser_mentions}...\n"
+        f"🏆 **Winners**: {winner_names}\n"
+        f"💀 **Losers**: {loser_names}\n"
+        f"🎯 **Score**: {score}",
+        view=view,
     )
 
 

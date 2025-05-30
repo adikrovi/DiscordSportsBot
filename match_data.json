@@ -1,29 +1,31 @@
 {
     "sports": {
-        "ping pong 1v1": {
+        "ping pong": {
             "team_size": 1
         }
     },
     "elo": {
         "284856322841640961": {
-            "ping pong 1v1": 1016.0
+            "ping pong": 1016.0
         },
         "1084376978439811134": {
-            "ping pong 1v1": 984.0
+            "ping pong": 984.0
         }
     },
     "matches": [
         {
-            "sport": "ping pong 1v1",
+            "sport": "ping pong",
             "winner_ids": [
                 284856322841640961
             ],
             "loser_ids": [
                 1084376978439811134
             ],
-            "score": "10-0",
+            "score": "21-0",
             "reported_by": 284856322841640961
         }
     ],
-    "naked_laps": {}
+    "naked_laps": {
+        "1084376978439811134": 1
+    }
 }
