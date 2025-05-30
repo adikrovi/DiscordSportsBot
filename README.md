@@ -16,21 +16,21 @@ A powerful Discord bot for managing competitive matches, calculating ELO ratings
 ## 💬 Commands Overview
 #### /create_sport — Create a sport.
 
-name: Name of the sport
+*name: Name of the sport*
 
-team_size: Either 1 (1v1) or 2 (2v2)
+*team_size: Either 1 (1v1) or 2 (2v2)*
 
-/match — Record a match result.
+#### /match — Record a match result.
 
-sport: Sport name (autocompletes)
+*sport: Sport name (autocompletes)*
 
-winner1, winner2: Winning players
+*winner1, winner2: Winning players*
 
-loser1, loser2: Losing players
+*loser1, loser2: Losing players*
 
-score: Match score (e.g., 2-0)
+*score: Match score (e.g., 2-0)*
 
-✅ Requires confirmation from one of the losing players before finalizing
+*✅ Requires confirmation from one of the losing players before finalizing*
 
 #### /leaderboard — Show ELO leaderboard for a sport.
 
