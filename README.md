@@ -18,7 +18,7 @@ A powerful Discord bot for managing competitive matches, calculating ELO ratings
 
 
 ## 💬 Commands Overview
-####/create_sport — Create a sport.
+#### /create_sport — Create a sport.
 
 name: Name of the sport
 
