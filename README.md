@@ -17,8 +17,8 @@ A powerful Discord bot for managing competitive matches, calculating ELO ratings
 ---
 
 
-💬 Commands Overview
-/create_sport — Create a sport.
+## 💬 Commands Overview
+####/create_sport — Create a sport.
 
 name: Name of the sport
 
@@ -36,16 +36,16 @@ score: Match score (e.g., 2-0)
 
 ✅ Requires confirmation from one of the losing players before finalizing
 
-/leaderboard — Show ELO leaderboard for a sport.
+#### /leaderboard — Show ELO leaderboard for a sport.
 
-/match_history — View a user's recent matches.
+#### /match_history — View a user's recent matches.
 
-/show_naked_laps — See who has the most 0-point losses.
+#### /show_naked_laps — See who has the most 0-point losses.
 
-/clear_naked_lap — Admin-only command to remove one naked lap from a user.
+#### /clear_naked_lap — Admin-only command to remove one naked lap from a user.
 
 
-📂 Data Format
+## 📂 Data Format
 All data is saved in match_data.json:
 
 {
@@ -55,7 +55,7 @@ All data is saved in match_data.json:
   "naked_laps":{}
 }
 
-🧠 Behind the Scenes
+## 🧠 Behind the Scenes
 ELO Rating System: Players’ scores are updated using the Elo system with a K-factor of 32.
 
 Naked Laps: If a team loses with 0 points (e.g. 2-0), each player on that team gets a naked lap.
